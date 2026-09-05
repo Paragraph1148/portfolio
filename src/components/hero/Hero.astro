@@ -1,0 +1,144 @@
+---
+import Corridor from "./Corridor";
+---
+
+<section id="hero-track" class="hero">
+  <div class="hero__sticky">
+    <div class="hero__scene">
+      <Corridor client:only="react" />
+    </div>
+
+    <div class="hero__copy shell">
+      <p class="hero__eyebrow">Rishabh Singh Kushwaha <span class="hero__kana">リシャブ</span></p>
+      <h1>
+        Backend engineer who takes<br />a system end to end.
+      </h1>
+      <p class="hero__lede">
+        The algorithm, the API around it, and the measurement harness that proves it
+        works. Below is a real one, assembling itself as you scroll.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The track is tall; the sticky child holds the viewport while scroll
+     drives the pipeline from ground truth to chosen trajectory. */
+  .hero {
+    position: relative;
+    height: 480vh;
+  }
+
+  .hero__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero__scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero__copy {
+    position: relative;
+    z-index: 1;
+    padding-top: clamp(48px, 11vh, 120px);
+    pointer-events: none;
+    /* --p is the hero's scroll progress, published by the scene */
+    opacity: clamp(0, calc(1.25 - var(--p, 0) * 4), 1);
+    transform: translateY(calc(var(--p, 0) * -40px));
+    will-change: opacity, transform;
+  }
+
+  .hero__eyebrow {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+    margin: 0 0 18px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .hero__kana {
+    font-family: var(--kana);
+    letter-spacing: 0.3em;
+    color: var(--legend-faint);
+    text-transform: none;
+  }
+
+  .hero h1 {
+    margin: 0 0 20px;
+  }
+
+  .hero__lede {
+    font-family: var(--sans);
+    font-size: var(--step-2);
+    line-height: 1.5;
+    max-width: 46ch;
+    margin: 0;
+    color: var(--legend-dim);
+  }
+
+  /* the readout, bottom-left, reporting which layer is on screen */
+  .hero :global(.hero__hud) {
+    position: absolute;
+    left: var(--gutter);
+    bottom: clamp(20px, 4vh, 40px);
+    z-index: 2;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 8px 14px;
+    max-width: min(560px, calc(100% - var(--gutter) * 2));
+  }
+  .hero :global(.hero__idx) {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--legend-dim);
+    font-size: var(--step--1);
+  }
+  .hero :global(.hero__stage) {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: var(--step-1);
+  }
+  .hero :global(.hero__ticks) {
+    display: flex;
+    gap: 5px;
+  }
+  .hero :global(.hero__ticks i) {
+    width: 20px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--rule-strong);
+    transition: background 0.3s ease;
+  }
+  .hero :global(.hero__ticks i.on) {
+    background: var(--accent);
+  }
+  .hero :global(.hero__what) {
+    grid-column: 1 / -1;
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    color: var(--legend-dim);
+    margin: 0;
+    max-width: 54ch;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      height: 420vh;
+    }
+    .hero :global(.hero__hud) {
+      grid-template-columns: auto 1fr;
+    }
+    .hero :global(.hero__ticks) {
+      display: none;
+    }
+  }
+</style>

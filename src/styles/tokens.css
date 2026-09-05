@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────────────────────────
+   RED SAMURAI — the deck
+   An anodised aluminium case (--case) with translucent keycaps
+   (--cap-glass) sitting proud of it. Legends are printed on the
+   caps. One red key per screen.
+
+   Light is the complete set on bare :root. Dark redefines only
+   tokens, twice: once for the OS preference and once for an
+   explicit stamp, so neither can strand the other.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --case: #dedbd3;
+  --case-groove: #cfcbc1;
+  --cap: #f7f4ec;
+  --cap-wall: #d8d3c6;
+  --cap-hi: rgba(255, 255, 255, 0.9);
+  --cap-shadow: rgba(38, 34, 26, 0.16);
+  --cap-glass: rgba(252, 250, 244, 0.58);
+  --cap-sheen: rgba(255, 255, 255, 0.75);
+  --cap-rim: rgba(255, 255, 255, 0.95);
+  --spec: rgba(255, 255, 255, 0.95);
+
+  --legend: #17171a;
+  --legend-dim: #6e6a61;
+  --legend-faint: #969186;
+
+  --accent: #c0271f;
+  --accent-glass: rgba(192, 39, 31, 0.82);
+  --accent-cap-wall: #8e1a14;
+  --accent-legend: #fff3f0;
+  --accent-glow: rgba(192, 39, 31, 0.34);
+  --amber: #9a5a00;
+
+  --rule: rgba(23, 23, 26, 0.13);
+  --rule-strong: rgba(23, 23, 26, 0.26);
+  --wordmark-dim: rgba(23, 23, 26, 0.1);
+  --grid: rgba(23, 23, 26, 0.05);
+  --ambient-a: rgba(192, 39, 31, 0.08);
+  --ambient-b: rgba(23, 23, 26, 0.05);
+
+  /* handed to the 3D scene, which cannot read CSS itself */
+  --scene-deck: #cbc7bc;
+  --scene-fog: #dedbd3;
+  --scene-ego: #17171a;
+  --scene-vehicle: #3987e5;
+  --scene-vulnerable: #199e70;
+  --scene-key: 2.05;
+  --scene-ambient: 1.15;
+
+  --step--1: 0.7rem;
+  --step-0: 0.82rem;
+  --step-1: 0.95rem;
+  --step-2: 1.2rem;
+  --step-3: 1.65rem;
+  --step-4: 2.4rem;
+  --step-5: clamp(2.6rem, 7vw, 4.6rem);
+
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --kana: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+
+  --measure: 66ch;
+  --gutter: clamp(18px, 4vw, 40px);
+  --shell: 1080px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --case: #0c0c0d;
+    --case-groove: #070708;
+    --cap: #1a1a1d;
+    --cap-wall: #0a0a0b;
+    --cap-hi: rgba(255, 255, 255, 0.07);
+    --cap-shadow: rgba(0, 0, 0, 0.6);
+    --cap-glass: rgba(40, 40, 47, 0.46);
+    --cap-sheen: rgba(255, 255, 255, 0.1);
+    --cap-rim: rgba(255, 255, 255, 0.16);
+    --spec: rgba(255, 255, 255, 0.32);
+
+    --legend: #efebe2;
+    --legend-dim: #8b867c;
+    --legend-faint: #605c55;
+
+    --accent: #e0392c;
+    --accent-glass: rgba(182, 42, 32, 0.74);
+    --accent-cap-wall: #5e120d;
+    --accent-legend: #fff0ed;
+    --accent-glow: rgba(224, 57, 44, 0.5);
+    --amber: #e6a949;
+
+    --rule: rgba(239, 235, 226, 0.13);
+    --rule-strong: rgba(239, 235, 226, 0.28);
+    --wordmark-dim: rgba(239, 235, 226, 0.07);
+    --grid: rgba(239, 235, 226, 0.045);
+    --ambient-a: rgba(224, 57, 44, 0.14);
+    --ambient-b: rgba(120, 140, 190, 0.06);
+
+    --scene-deck: #202025;
+    --scene-fog: #0c0c0d;
+    --scene-ego: #d8d3c6;
+    --scene-vehicle: #3987e5;
+    --scene-vulnerable: #199e70;
+    --scene-key: 1.5;
+    --scene-ambient: 0.5;
+  }
+}
+
+:root[data-theme="dark"] {
+  --case: #0c0c0d;
+  --case-groove: #070708;
+  --cap: #1a1a1d;
+  --cap-wall: #0a0a0b;
+  --cap-hi: rgba(255, 255, 255, 0.07);
+  --cap-shadow: rgba(0, 0, 0, 0.6);
+  --cap-glass: rgba(40, 40, 47, 0.46);
+  --cap-sheen: rgba(255, 255, 255, 0.1);
+  --cap-rim: rgba(255, 255, 255, 0.16);
+  --spec: rgba(255, 255, 255, 0.32);
+
+  --legend: #efebe2;
+  --legend-dim: #8b867c;
+  --legend-faint: #605c55;
+
+  --accent: #e0392c;
+  --accent-glass: rgba(182, 42, 32, 0.74);
+  --accent-cap-wall: #5e120d;
+  --accent-legend: #fff0ed;
+  --accent-glow: rgba(224, 57, 44, 0.5);
+  --amber: #e6a949;
+
+  --rule: rgba(239, 235, 226, 0.13);
+  --rule-strong: rgba(239, 235, 226, 0.28);
+  --wordmark-dim: rgba(239, 235, 226, 0.07);
+  --grid: rgba(239, 235, 226, 0.045);
+  --ambient-a: rgba(224, 57, 44, 0.14);
+  --ambient-b: rgba(120, 140, 190, 0.06);
+
+  --scene-deck: #202025;
+  --scene-fog: #0c0c0d;
+  --scene-ego: #d8d3c6;
+  --scene-vehicle: #3987e5;
+  --scene-vulnerable: #199e70;
+  --scene-key: 1.5;
+  --scene-ambient: 0.5;
+}
