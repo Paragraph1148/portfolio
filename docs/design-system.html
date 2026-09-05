@@ -18,6 +18,13 @@
   --cap-edge:#E9E4D8;
   --cap-hi:rgba(255,255,255,.9);
   --cap-shadow:rgba(38,34,26,.16);
+  --cap-glass:rgba(252,250,244,.58);
+  --cap-sheen:rgba(255,255,255,.75);
+  --cap-rim:rgba(255,255,255,.95);
+  --spec:rgba(255,255,255,.95);
+  --accent-glass:rgba(192,39,31,.82);
+  --ambient-a:rgba(192,39,31,.08);
+  --ambient-b:rgba(23,23,26,.05);
   --legend:#17171A;
   --legend-dim:#6E6A61;
   --legend-faint:#969186;
@@ -57,6 +64,13 @@
     --cap-edge:#141416;
     --cap-hi:rgba(255,255,255,.07);
     --cap-shadow:rgba(0,0,0,.6);
+    --cap-glass:rgba(40,40,47,.46);
+    --cap-sheen:rgba(255,255,255,.10);
+    --cap-rim:rgba(255,255,255,.16);
+    --spec:rgba(255,255,255,.32);
+    --accent-glass:rgba(182,42,32,.74);
+    --ambient-a:rgba(224,57,44,.14);
+    --ambient-b:rgba(120,140,190,.06);
     --legend:#EFEBE2;
     --legend-dim:#8B867C;
     --legend-faint:#605C55;
@@ -84,6 +98,13 @@
   --cap-edge:#141416;
   --cap-hi:rgba(255,255,255,.07);
   --cap-shadow:rgba(0,0,0,.6);
+  --cap-glass:rgba(40,40,47,.46);
+  --cap-sheen:rgba(255,255,255,.10);
+  --cap-rim:rgba(255,255,255,.16);
+  --spec:rgba(255,255,255,.32);
+  --accent-glass:rgba(182,42,32,.74);
+  --ambient-a:rgba(224,57,44,.14);
+  --ambient-b:rgba(120,140,190,.06);
   --legend:#EFEBE2;
   --legend-dim:#8B867C;
   --legend-faint:#605C55;
@@ -113,37 +134,58 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
+/* ambient light for the glass to catch — without something behind it,
+   a translucent surface has nothing to refract and reads as flat tint */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(58% 44% at 76% 6%,var(--ambient-a),transparent 68%),
+    radial-gradient(50% 50% at 12% 88%,var(--ambient-b),transparent 70%);
+}
 .wrap{max-width:1080px;margin:0 auto;padding:clamp(24px,5vw,64px) clamp(18px,4vw,40px) 0}
 section{margin-bottom:clamp(48px,7vw,88px)}
 
 /* ── shared: the keycap object ───────────────────────────────── */
 .cap{
+  --px:50%;--py:50%;              /* pointer position within this cap */
   position:relative;
-  border-radius:9px;
-  background:linear-gradient(178deg,var(--cap-top) 0%,var(--cap) 46%,var(--cap-edge) 100%);
+  border-radius:11px;
+  background:linear-gradient(178deg,var(--cap-sheen),transparent 44%),var(--cap-glass);
+  -webkit-backdrop-filter:blur(16px) saturate(1.7);
+  backdrop-filter:blur(16px) saturate(1.7);
   box-shadow:
-    0 1px 0 var(--cap-hi) inset,
+    0 1px 0 var(--cap-rim) inset,
+    0 0 0 1px var(--cap-hi) inset,
     0 4px 0 var(--cap-wall),
     0 7px 14px var(--cap-shadow);
   transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s cubic-bezier(.2,.8,.3,1);
 }
-.cap::before{ /* the backlight, bleeding out from under the cap */
-  content:"";position:absolute;inset:-6px;border-radius:14px;z-index:-1;
-  background:radial-gradient(60% 70% at 50% 60%,var(--accent-glow),transparent 72%);
+/* the backlight — a switch under the cap, at the pointer, glowing through
+   the translucent face and bleeding past its edges */
+.cap::before{
+  content:"";position:absolute;inset:-6px;border-radius:16px;z-index:-1;
+  background:radial-gradient(42% 54% at var(--px) var(--py),var(--accent-glow),transparent 72%);
   filter:blur(9px);opacity:0;transition:opacity .22s ease;
 }
+/* the specular — light sliding across the glass surface, also at the pointer */
+.cap::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(40% 52% at var(--px) var(--py),var(--spec),transparent 68%);
+  opacity:.28;mix-blend-mode:soft-light;transition:opacity .25s ease;
+}
+.cap:hover::after,.cap:focus-visible::after,.cap.demo-lit::after{opacity:.7}
 .cap:hover,.cap:focus-visible{
   transform:translateY(-2px);
-  box-shadow:0 1px 0 var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow);
+  box-shadow:0 1px 0 var(--cap-rim) inset,0 0 0 1px var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow);
 }
 .cap:hover::before,.cap:focus-visible::before{opacity:1}
-.cap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
+.cap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-rim) inset,0 0 0 1px var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
 .cap.is-accent{
-  background:linear-gradient(178deg,var(--accent-cap-top) 0%,var(--accent-cap) 52%,var(--accent-cap) 100%);
-  box-shadow:0 1px 0 rgba(255,255,255,.24) inset,0 4px 0 var(--accent-cap-wall),0 7px 14px var(--cap-shadow);
+  background:linear-gradient(178deg,rgba(255,255,255,.26),transparent 44%),var(--accent-glass);
+  box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 0 0 1px rgba(255,255,255,.1) inset,0 4px 0 var(--accent-cap-wall),0 7px 14px var(--cap-shadow);
   color:var(--accent-legend);
 }
-.cap.is-accent:hover{box-shadow:0 1px 0 rgba(255,255,255,.24) inset,0 6px 0 var(--accent-cap-wall),0 12px 22px var(--cap-shadow)}
+.cap.is-accent:hover{box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 0 0 1px rgba(255,255,255,.1) inset,0 6px 0 var(--accent-cap-wall),0 12px 22px var(--cap-shadow)}
 
 /* kana sublegend, printed in the corner of a cap like a JIS keycap */
 .kana{
@@ -183,8 +225,8 @@ p{font-family:var(--sans);max-width:66ch;line-height:1.65}
 
 /* ── palette ─────────────────────────────────────────────────── */
 .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:12px}
-.sw{padding:0;overflow:hidden}
-.sw .chip{height:62px;border-bottom:1px solid var(--rule)}
+.sw{padding:0}
+.sw .chip{height:62px;border-bottom:1px solid var(--rule);border-radius:11px 11px 0 0}
 .sw .meta{padding:9px 11px 11px}
 .sw .name{font-size:var(--step--1);letter-spacing:.1em;text-transform:uppercase;color:var(--legend-dim)}
 .sw .hex{font-weight:500;font-size:var(--step-0);font-variant-numeric:tabular-nums}
@@ -207,8 +249,8 @@ p{font-family:var(--sans);max-width:66ch;line-height:1.65}
 .state .cap{width:100%;height:96px;display:grid;place-items:center;font-weight:600;font-size:var(--step-2)}
 .state .caption{font-family:var(--sans);font-size:var(--step--1);color:var(--legend-dim);line-height:1.45}
 .cap.demo-lit::before{opacity:1}
-.cap.demo-lit{transform:translateY(-2px);box-shadow:0 1px 0 var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow)}
-.cap.demo-down{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
+.cap.demo-lit{--px:32%;--py:34%;transform:translateY(-2px);box-shadow:0 1px 0 var(--cap-rim) inset,0 0 0 1px var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow)}
+.cap.demo-down{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-rim) inset,0 0 0 1px var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
 
 /* ── hero sequence ───────────────────────────────────────────── */
 .seq{border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--case)}
@@ -258,13 +300,23 @@ p{font-family:var(--sans);max-width:66ch;line-height:1.65}
 /* ── footer wordmark, backlit under the cursor ───────────────── */
 footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
 .wordmark{
+  position:relative;
   font-family:var(--mono);font-weight:600;
   font-size:clamp(3rem,15.5vw,11.5rem);
   letter-spacing:-.055em;line-height:.86;margin:0;
-  background:radial-gradient(38% 200% at var(--mx,32%) 50%,var(--legend) 0%,var(--wordmark-dim) 62%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
   cursor:default;user-select:none;
 }
+.wordmark span{display:block}
+.wordmark .base{color:var(--wordmark-dim)}
+/* the lit layer sits on top and only its opacity moves, so releasing the
+   pointer fades the glimmer out where it stands instead of snapping home */
+.wordmark .lit{
+  position:absolute;inset:0;
+  background:radial-gradient(30% 120% at var(--mx,28%) var(--my,46%),var(--legend) 0%,transparent 62%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  opacity:.4;transition:opacity 1.2s cubic-bezier(.25,.75,.35,1);
+}
+.wordmark:hover .lit{opacity:1;transition-duration:.16s}
 .colophon{
   display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
   font-size:var(--step--1);color:var(--legend-dim);padding:14px 0 40px;
@@ -284,7 +336,7 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
   <section>
     <p class="eyebrow">Design system · locked 05 Sep 2026</p>
     <h1>Red Samurai Deck<span class="sub">レッド サムライ デッキ</span></h1>
-    <p class="lede">The visual system for <em>rishabhkushwaha.com</em>. Every surface on the page is a keycap: soft, matte, sitting proud of an anodised case, lit from underneath when you touch it. One red key per screen and nothing else shouts.</p>
+    <p class="lede">The visual system for <em>rishabhkushwaha.com</em>. Every surface on the page is a keycap — glass at rest, sitting proud of an anodised case, with a switch underneath that finds your pointer and lights the cap from below. One red key per screen and nothing else shouts.</p>
 
     <dl class="cluster">
       <div class="cap"><span class="kana">ア</span><dt>Palette</dt><dd>Red Samurai</dd></div>
@@ -301,7 +353,7 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
     <p class="note">Not invented — lifted from Sarathi's own console and pushed toward Red Samurai. Your Mission Control already runs warm paper, sumi black and a vermillion at <code>#c22f2e</code>. This keeps that lineage so the portfolio and the project read as one hand. Hover any cap to see the backlight.</p>
     <div class="swatches">
       <div class="cap sw"><div class="chip" style="background:var(--case)"></div><div class="meta"><div class="name">Case</div><div class="hex" id="hx-case">—</div><div class="role">The anodised deck. Page ground.</div></div></div>
-      <div class="cap sw"><div class="chip" style="background:var(--cap)"></div><div class="meta"><div class="name">Cap</div><div class="hex" id="hx-cap">—</div><div class="role">PBT keycap face. Every surface.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--cap-glass)"></div><div class="meta"><div class="name">Cap</div><div class="hex" id="hx-cap">—</div><div class="role">Keycap face. Translucent — the case reads through it.</div></div></div>
       <div class="cap sw"><div class="chip" style="background:var(--legend)"></div><div class="meta"><div class="name">Legend</div><div class="hex" id="hx-legend">—</div><div class="role">Printed type. Sumi, never pure black.</div></div></div>
       <div class="cap sw"><div class="chip" style="background:var(--legend-dim)"></div><div class="meta"><div class="name">Dim</div><div class="hex" id="hx-dim">—</div><div class="role">Secondary legends, captions.</div></div></div>
       <div class="cap sw"><div class="chip" style="background:var(--accent)"></div><div class="meta"><div class="name">Samurai</div><div class="hex" id="hx-accent">—</div><div class="role">The escape key. Once per screen.</div></div></div>
@@ -326,10 +378,10 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
   <section>
     <p class="eyebrow">03 · The component</p>
     <h2>Keycap</h2>
-    <p class="note">This is the answer to the boxy Mission Control problem. A keycap is still a rectangle, but it has a top face, a side wall, a cast shadow and a gap around it — so it reads as an object you could pick up, not a bordered div. Nothing on the site gets a flat outline.</p>
+    <p class="note">This is the answer to the boxy Mission Control problem. A keycap is still a rectangle, but it has a top face, a side wall, a cast shadow and a gap around it — so it reads as an object you could pick up, not a bordered div. At rest it's glass: translucent, blurred, with a specular rim, so the case reads through it. Move across one and two lights track you at once — a white specular sliding over the surface, and the red switch glowing up through it from below. Nothing on the site gets a flat outline.</p>
     <div class="states">
-      <div class="state"><div class="cap">A</div><div class="caption">Rest. Top highlight, 4px wall, soft cast shadow.</div></div>
-      <div class="state"><div class="cap demo-lit">A</div><div class="caption">Backlit. Lifts 2px, red bleeds from underneath.</div></div>
+      <div class="state"><div class="cap">A</div><div class="caption">Glass. Translucent, blurred, specular rim, 4px wall.</div></div>
+      <div class="state"><div class="cap demo-lit">A</div><div class="caption">Backlit. The switch sits wherever your pointer is.</div></div>
       <div class="state"><div class="cap demo-down">A</div><div class="caption">Pressed. Wall collapses to 1px. Real travel.</div></div>
       <div class="state"><div class="cap is-accent"><span class="kana">ヌ</span>Esc</div><div class="caption">The accent key. One per screen, never two.</div></div>
     </div>
@@ -396,14 +448,14 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
     <p class="eyebrow">07 · Before I build</p>
     <h2>Open</h2>
     <ul class="open">
-      <li data-k="A">Sublegends here are katakana, as agreed. A real JIS keycap prints <em>hiragana</em> — ぬ ふ あ う え — because of the kana input layout. Katakana is the aftermarket keycap-set convention, which is where Red Samurai lives, so I've gone with it. Say the word and I'll swap to the authentic JIS mapping.</li>
+      <li data-k="A">Katakana stays — it's the script for foreign words and names, which is exactly what this page is. Your own name renders リシャブ in it, and it's the convention the Red Samurai keycap sets use. Settled.</li>
       <li data-k="B">The Mission Control re-skin lands in <code>automated-driving</code>, which this session only has read access to. I'll deliver it as a patch you apply, unless you want me to attach the repo with push rights.</li>
-      <li data-k="C">Dark mode here is genuinely dark — near-black case, charcoal caps. Light mode is a warm aluminium deck, not white. Check both by flipping your OS theme; nothing on this page is defined in only one of them.</li>
+      <li data-k="C">The glass costs a <code>backdrop-filter</code> per cap, which is cheap on a laptop and not free on a mid-range Android. On the real site I'll cap how many are on screen at once and drop the blur below a width threshold, keeping the rim and the backlight — those are nearly free and carry most of the effect.</li>
     </ul>
   </section>
 
   <footer>
-    <h2 class="wordmark" id="wm">RISHABH</h2>
+    <h2 class="wordmark" id="wm"><span class="base">RISHABH</span><span class="lit" aria-hidden="true">RISHABH</span></h2>
     <div class="colophon">
       <span>Design system proof — not the site. Astro scaffold next.</span>
       <span>IBM Plex Mono · Plex Sans · Noto Sans JP</span>
@@ -415,7 +467,7 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
 /* ── show the resolved token values, so the hexes are never stale ── */
 (function(){
   var cs=getComputedStyle(document.documentElement);
-  var map={"hx-case":"--case","hx-cap":"--cap","hx-legend":"--legend","hx-dim":"--legend-dim","hx-accent":"--accent","hx-amber":"--amber"};
+  var map={"hx-case":"--case","hx-cap":"--cap-glass","hx-legend":"--legend","hx-dim":"--legend-dim","hx-accent":"--accent","hx-amber":"--amber"};
   function paint(){
     for(var id in map){
       var el=document.getElementById(id);
@@ -429,15 +481,36 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
   }
 })();
 
-/* ── footer wordmark: backlight follows the pointer ─────────────── */
+/* ── pointer-tracked light ──────────────────────────────────────
+   One rAF-coalesced listener drives both the keycap backlight and the
+   footer glimmer. Neither resets its position on leave — only the
+   brightness falls away, so the light dies where it stood.            */
 (function(){
   var wm=document.getElementById("wm");
-  if(!wm) return;
-  wm.addEventListener("pointermove",function(e){
-    var r=wm.getBoundingClientRect();
-    wm.style.setProperty("--mx",((e.clientX-r.left)/r.width*100).toFixed(1)+"%");
-  });
-  wm.addEventListener("pointerleave",function(){wm.style.setProperty("--mx","32%")});
+  var pending=null,frame=0;
+
+  function apply(){
+    frame=0;
+    if(!pending) return;
+    var el=pending.el,r=el.getBoundingClientRect();
+    if(r.width&&r.height){
+      el.style.setProperty(pending.x,((pending.cx-r.left)/r.width*100).toFixed(1)+"%");
+      el.style.setProperty(pending.y,((pending.cy-r.top)/r.height*100).toFixed(1)+"%");
+    }
+    pending=null;
+  }
+  function track(el,cx,cy,xv,yv){
+    pending={el:el,cx:cx,cy:cy,x:xv,y:yv};
+    if(!frame) frame=requestAnimationFrame(apply);
+  }
+
+  document.addEventListener("pointermove",function(e){
+    var t=e.target;
+    if(!t||!t.closest) return;
+    var cap=t.closest(".cap");
+    if(cap){track(cap,e.clientX,e.clientY,"--px","--py");return}
+    if(wm&&t.closest("#wm")) track(wm,e.clientX,e.clientY,"--mx","--my");
+  },{passive:true});
 })();
 
 /* ── the assembly sequence ──────────────────────────────────────── */
@@ -510,7 +583,7 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
       AGENTS.forEach(function(a){
         var g=ctx.createRadialGradient(px(a),py(a),2,px(a),py(a),a.k==="v"?118:150);
         g.addColorStop(0,c.accent);g.addColorStop(1,"rgba(0,0,0,0)");
-        ctx.globalAlpha=a.k==="v"?.16:.26;ctx.fillStyle=g;
+        ctx.globalAlpha=a.k==="v"?.2:.32;ctx.fillStyle=g;
         ctx.beginPath();ctx.arc(px(a),py(a),a.k==="v"?118:150,0,7);ctx.fill();
       });
       ctx.globalAlpha=1;
@@ -548,8 +621,8 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
       for(var i=0;i<n;i++){
         var lat=(i/(n-1)-.5)*220, live=i%7!==0;
         ctx.strokeStyle=stage>=7?c.faint:(live?c.dim:c.faint);
-        ctx.globalAlpha=stage>=7?.22:(live?.5:.16);
-        ctx.lineWidth=2;
+        ctx.globalAlpha=stage>=7?.3:(live?.62:.2);
+        ctx.lineWidth=2.2;
         ctx.beginPath();
         ctx.moveTo(px(EGO)+EGO.w/2,py(EGO));
         ctx.bezierCurveTo(W*.42,py(EGO),W*.55,road(.62)+lat,W*.94,road(.94)+lat*.42);
@@ -560,7 +633,7 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
 
     /* 7 — the one that survives */
     if(stage>=7){
-      ctx.strokeStyle=c.amber;ctx.lineWidth=5;ctx.lineCap="round";
+      ctx.strokeStyle=c.amber;ctx.lineWidth=6;ctx.lineCap="round";
       ctx.beginPath();
       ctx.moveTo(px(EGO)+EGO.w/2,py(EGO));
       ctx.bezierCurveTo(W*.42,py(EGO),W*.55,road(.62)-56,W*.94,road(.94)-22);
@@ -596,7 +669,12 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
   for(var i=0;i<7;i++) ticks.appendChild(document.createElement("i"));
   var tickEls=ticks.querySelectorAll("i");
 
-  function show(stage){
+  var stage=7;            /* first paint is the payoff, so a still frame reads */
+
+  /* clamped, because a resize can call show() at any moment and an
+     out-of-range stage draws an empty scene and throws on the label */
+  function show(s){
+    stage=Math.min(7,Math.max(1,s|0));
     draw(stage);
     document.getElementById("seq-idx").textContent=stage+"/7";
     document.getElementById("seq-stage").textContent=STAGES[stage-1][0];
@@ -605,16 +683,20 @@ footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
   }
 
   fit();
-  var stage=7;            /* first paint is the payoff, so a still frame reads */
   show(stage);
-  window.addEventListener("resize",function(){fit();show(stage)});
+
+  var rz;
+  window.addEventListener("resize",function(){
+    clearTimeout(rz);
+    rz=setTimeout(function(){fit();show(stage)},120);
+  });
 
   var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(!reduce){
     setTimeout(function(){
-      stage=0;
-      setInterval(function(){stage=stage%7+1;show(stage)},1700);
-    },2200);
+      show(1);
+      setInterval(function(){show(stage%7+1)},1700);
+    },3400);
   }
 })();
 </script>
