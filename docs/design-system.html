@@ -1,0 +1,620 @@
+<title>Red Samurai Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   TOKENS — light is the complete set on bare :root.
+   Metaphor: an anodised aluminium case (--case) with PBT
+   keycaps (--cap) sitting proud of it. Legends are printed
+   on the caps. One red key per screen.
+   ───────────────────────────────────────────────────────────── */
+:root{
+  --case:#DEDBD3;
+  --case-groove:#CFCBC1;
+  --cap:#F7F4EC;
+  --cap-top:#FFFDF7;
+  --cap-wall:#D8D3C6;
+  --cap-edge:#E9E4D8;
+  --cap-hi:rgba(255,255,255,.9);
+  --cap-shadow:rgba(38,34,26,.16);
+  --legend:#17171A;
+  --legend-dim:#6E6A61;
+  --legend-faint:#969186;
+  --accent:#C0271F;
+  --accent-cap:#C0271F;
+  --accent-cap-top:#D6362C;
+  --accent-cap-wall:#8E1A14;
+  --accent-legend:#FFF3F0;
+  --accent-glow:rgba(192,39,31,.34);
+  --amber:#9A5A00;
+  --rule:rgba(23,23,26,.13);
+  --rule-strong:rgba(23,23,26,.26);
+  --wordmark-dim:rgba(23,23,26,.10);
+  --grid:rgba(23,23,26,.05);
+  --canvas-road:#E6E1D6;
+  --canvas-ink:#17171A;
+
+  --step--1:.7rem;
+  --step-0:.82rem;
+  --step-1:.95rem;
+  --step-2:1.2rem;
+  --step-3:1.65rem;
+  --step-4:2.4rem;
+  --step-5:3.4rem;
+
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --kana:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --case:#0C0C0D;
+    --case-groove:#070708;
+    --cap:#1A1A1D;
+    --cap-top:#232327;
+    --cap-wall:#0A0A0B;
+    --cap-edge:#141416;
+    --cap-hi:rgba(255,255,255,.07);
+    --cap-shadow:rgba(0,0,0,.6);
+    --legend:#EFEBE2;
+    --legend-dim:#8B867C;
+    --legend-faint:#605C55;
+    --accent:#E0392C;
+    --accent-cap:#B62A20;
+    --accent-cap-top:#D3382C;
+    --accent-cap-wall:#5E120D;
+    --accent-legend:#FFF0ED;
+    --accent-glow:rgba(224,57,44,.5);
+    --amber:#E6A949;
+    --rule:rgba(239,235,226,.13);
+    --rule-strong:rgba(239,235,226,.28);
+    --wordmark-dim:rgba(239,235,226,.07);
+    --grid:rgba(239,235,226,.045);
+    --canvas-road:#26262A;
+    --canvas-ink:#EFEBE2;
+  }
+}
+:root[data-theme="dark"]{
+  --case:#0C0C0D;
+  --case-groove:#070708;
+  --cap:#1A1A1D;
+  --cap-top:#232327;
+  --cap-wall:#0A0A0B;
+  --cap-edge:#141416;
+  --cap-hi:rgba(255,255,255,.07);
+  --cap-shadow:rgba(0,0,0,.6);
+  --legend:#EFEBE2;
+  --legend-dim:#8B867C;
+  --legend-faint:#605C55;
+  --accent:#E0392C;
+  --accent-cap:#B62A20;
+  --accent-cap-top:#D3382C;
+  --accent-cap-wall:#5E120D;
+  --accent-legend:#FFF0ED;
+  --accent-glow:rgba(224,57,44,.5);
+  --amber:#E6A949;
+  --rule:rgba(239,235,226,.13);
+  --rule-strong:rgba(239,235,226,.28);
+  --wordmark-dim:rgba(239,235,226,.07);
+  --grid:rgba(239,235,226,.045);
+  --canvas-road:#26262A;
+  --canvas-ink:#EFEBE2;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--case);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:56px 56px;
+  color:var(--legend);
+  font-family:var(--mono);
+  font-size:var(--step-0);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(24px,5vw,64px) clamp(18px,4vw,40px) 0}
+section{margin-bottom:clamp(48px,7vw,88px)}
+
+/* ── shared: the keycap object ───────────────────────────────── */
+.cap{
+  position:relative;
+  border-radius:9px;
+  background:linear-gradient(178deg,var(--cap-top) 0%,var(--cap) 46%,var(--cap-edge) 100%);
+  box-shadow:
+    0 1px 0 var(--cap-hi) inset,
+    0 4px 0 var(--cap-wall),
+    0 7px 14px var(--cap-shadow);
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s cubic-bezier(.2,.8,.3,1);
+}
+.cap::before{ /* the backlight, bleeding out from under the cap */
+  content:"";position:absolute;inset:-6px;border-radius:14px;z-index:-1;
+  background:radial-gradient(60% 70% at 50% 60%,var(--accent-glow),transparent 72%);
+  filter:blur(9px);opacity:0;transition:opacity .22s ease;
+}
+.cap:hover,.cap:focus-visible{
+  transform:translateY(-2px);
+  box-shadow:0 1px 0 var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow);
+}
+.cap:hover::before,.cap:focus-visible::before{opacity:1}
+.cap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
+.cap.is-accent{
+  background:linear-gradient(178deg,var(--accent-cap-top) 0%,var(--accent-cap) 52%,var(--accent-cap) 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.24) inset,0 4px 0 var(--accent-cap-wall),0 7px 14px var(--cap-shadow);
+  color:var(--accent-legend);
+}
+.cap.is-accent:hover{box-shadow:0 1px 0 rgba(255,255,255,.24) inset,0 6px 0 var(--accent-cap-wall),0 12px 22px var(--cap-shadow)}
+
+/* kana sublegend, printed in the corner of a cap like a JIS keycap */
+.kana{
+  font-family:var(--kana);font-weight:400;font-size:.62em;
+  color:var(--legend-faint);position:absolute;top:6px;right:8px;line-height:1;
+}
+.is-accent .kana{color:rgba(255,255,255,.55)}
+
+/* ── masthead ────────────────────────────────────────────────── */
+.eyebrow{
+  font-size:var(--step--1);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--legend-dim);margin:0 0 14px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule)}
+h1{
+  font-family:var(--mono);font-weight:600;font-size:var(--step-5);
+  letter-spacing:-.03em;line-height:1.02;margin:0 0 18px;text-wrap:balance;
+}
+h1 .sub{display:block;font-family:var(--kana);font-weight:400;font-size:.3em;letter-spacing:.34em;color:var(--legend-faint);margin-top:14px}
+.lede{font-family:var(--sans);font-size:var(--step-2);line-height:1.5;max-width:60ch;color:var(--legend);margin:0 0 28px}
+.lede em{font-style:normal;color:var(--accent);font-family:var(--mono);font-size:.9em}
+
+h2{
+  font-family:var(--mono);font-weight:600;font-size:var(--step-3);
+  letter-spacing:-.02em;margin:0 0 6px;text-wrap:balance;
+}
+h3{font-family:var(--mono);font-weight:600;font-size:var(--step-1);letter-spacing:0;margin:0 0 4px}
+.note{font-family:var(--sans);color:var(--legend-dim);max-width:66ch;margin:0 0 26px;font-size:var(--step-1);line-height:1.65}
+p{font-family:var(--sans);max-width:66ch;line-height:1.65}
+
+/* ── locked decisions: a key cluster ─────────────────────────── */
+.cluster{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px}
+.cluster .cap{padding:13px 14px 14px;min-height:88px;display:flex;flex-direction:column;justify-content:space-between}
+.cluster dt{font-size:var(--step--1);letter-spacing:.13em;text-transform:uppercase;color:var(--legend-dim);margin:0}
+.is-accent dt{color:rgba(255,255,255,.72)}
+.cluster dd{margin:0;font-weight:500;font-size:var(--step-1);line-height:1.35}
+
+/* ── palette ─────────────────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:12px}
+.sw{padding:0;overflow:hidden}
+.sw .chip{height:62px;border-bottom:1px solid var(--rule)}
+.sw .meta{padding:9px 11px 11px}
+.sw .name{font-size:var(--step--1);letter-spacing:.1em;text-transform:uppercase;color:var(--legend-dim)}
+.sw .hex{font-weight:500;font-size:var(--step-0);font-variant-numeric:tabular-nums}
+.sw .role{font-family:var(--sans);font-size:var(--step--1);color:var(--legend-faint);line-height:1.4;margin-top:3px}
+
+/* ── type specimen ───────────────────────────────────────────── */
+.specimen{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.specimen .row{background:var(--case);padding:16px 18px;display:grid;grid-template-columns:132px 1fr;gap:20px;align-items:baseline}
+.specimen .tag{font-size:var(--step--1);letter-spacing:.12em;text-transform:uppercase;color:var(--legend-dim)}
+.sp-display{font-family:var(--mono);font-weight:600;font-size:var(--step-4);letter-spacing:-.03em;line-height:1.05}
+.sp-h{font-family:var(--mono);font-weight:600;font-size:var(--step-2);letter-spacing:-.01em}
+.sp-body{font-family:var(--sans);font-size:var(--step-1);line-height:1.65}
+.sp-data{font-family:var(--mono);font-weight:500;font-size:var(--step-1);font-variant-numeric:tabular-nums;color:var(--amber)}
+.sp-label{font-family:var(--mono);font-size:var(--step--1);letter-spacing:.16em;text-transform:uppercase;color:var(--legend-dim)}
+.sp-kana{font-family:var(--kana);font-size:var(--step-2);letter-spacing:.3em;color:var(--legend-faint)}
+
+/* ── keycap states ───────────────────────────────────────────── */
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.state{display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.state .cap{width:100%;height:96px;display:grid;place-items:center;font-weight:600;font-size:var(--step-2)}
+.state .caption{font-family:var(--sans);font-size:var(--step--1);color:var(--legend-dim);line-height:1.45}
+.cap.demo-lit::before{opacity:1}
+.cap.demo-lit{transform:translateY(-2px);box-shadow:0 1px 0 var(--cap-hi) inset,0 6px 0 var(--cap-wall),0 12px 22px var(--cap-shadow)}
+.cap.demo-down{transform:translateY(3px);box-shadow:0 1px 0 var(--cap-hi) inset,0 1px 0 var(--cap-wall),0 3px 6px var(--cap-shadow)}
+
+/* ── hero sequence ───────────────────────────────────────────── */
+.seq{border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--case)}
+.seq canvas{display:block;width:100%;height:auto}
+.seq .bar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:11px 15px;border-top:1px solid var(--rule);
+}
+.seq .stage{font-weight:600;font-size:var(--step-1);min-width:15ch}
+.seq .idx{color:var(--legend-dim);font-variant-numeric:tabular-nums}
+.ticks{display:flex;gap:5px;margin-left:auto}
+.ticks i{width:20px;height:4px;border-radius:2px;background:var(--rule-strong);transition:background .3s}
+.ticks i.on{background:var(--accent)}
+.seq .what{font-family:var(--sans);color:var(--legend-dim);font-size:var(--step--1);flex-basis:100%;margin:0}
+
+/* ── mapping table ───────────────────────────────────────────── */
+.map{width:100%;border-collapse:collapse;font-size:var(--step-0)}
+.map th{
+  text-align:left;font-weight:500;font-size:var(--step--1);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--legend-dim);padding:0 14px 9px 0;border-bottom:1px solid var(--rule-strong);
+}
+.map td{padding:11px 14px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.map tr:last-child td{border-bottom:0}
+.map .n{font-variant-numeric:tabular-nums;color:var(--legend-faint);width:2.5ch}
+.map .ours{font-weight:500}
+.map .theirs{font-family:var(--sans);color:var(--legend-dim)}
+.scroll-x{overflow-x:auto}
+
+/* ── routing ─────────────────────────────────────────────────── */
+.routes{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:14px}
+.route{padding:18px 19px 19px}
+.route .host{font-weight:600;font-size:var(--step-1);word-break:break-all}
+.route .who{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:9px 0 7px}
+.route p{font-size:var(--step-0);color:var(--legend-dim);margin:0;line-height:1.6}
+
+.open{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.open li{
+  font-family:var(--sans);font-size:var(--step-1);line-height:1.6;
+  padding-left:26px;position:relative;color:var(--legend);max-width:72ch;
+}
+.open li::before{
+  content:attr(data-k);position:absolute;left:0;top:.28em;
+  font-family:var(--mono);font-size:.62rem;font-weight:600;color:var(--accent);
+  border:1px solid var(--accent);border-radius:3px;padding:1px 4px;line-height:1;
+}
+
+/* ── footer wordmark, backlit under the cursor ───────────────── */
+footer{margin-top:24px;border-top:1px solid var(--rule);padding:34px 0 8px}
+.wordmark{
+  font-family:var(--mono);font-weight:600;
+  font-size:clamp(3rem,15.5vw,11.5rem);
+  letter-spacing:-.055em;line-height:.86;margin:0;
+  background:radial-gradient(38% 200% at var(--mx,32%) 50%,var(--legend) 0%,var(--wordmark-dim) 62%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  cursor:default;user-select:none;
+}
+.colophon{
+  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  font-size:var(--step--1);color:var(--legend-dim);padding:14px 0 40px;
+}
+
+@media (max-width:640px){
+  .specimen .row{grid-template-columns:1fr;gap:7px}
+  .cluster{grid-template-columns:repeat(auto-fit,minmax(142px,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+
+<div class="wrap">
+
+  <section>
+    <p class="eyebrow">Design system · locked 05 Sep 2026</p>
+    <h1>Red Samurai Deck<span class="sub">レッド サムライ デッキ</span></h1>
+    <p class="lede">The visual system for <em>rishabhkushwaha.com</em>. Every surface on the page is a keycap: soft, matte, sitting proud of an anodised case, lit from underneath when you touch it. One red key per screen and nothing else shouts.</p>
+
+    <dl class="cluster">
+      <div class="cap"><span class="kana">ア</span><dt>Palette</dt><dd>Red Samurai</dd></div>
+      <div class="cap"><span class="kana">カ</span><dt>Theme</dt><dd>Follows browser</dd></div>
+      <div class="cap"><span class="kana">サ</span><dt>Type</dt><dd>Mono-led</dd></div>
+      <div class="cap"><span class="kana">タ</span><dt>Framework</dt><dd>Astro + R3F</dd></div>
+      <div class="cap is-accent"><span class="kana">ナ</span><dt>Accent</dt><dd>One key</dd></div>
+    </dl>
+  </section>
+
+  <section>
+    <p class="eyebrow">01 · The deck</p>
+    <h2>Palette</h2>
+    <p class="note">Not invented — lifted from Sarathi's own console and pushed toward Red Samurai. Your Mission Control already runs warm paper, sumi black and a vermillion at <code>#c22f2e</code>. This keeps that lineage so the portfolio and the project read as one hand. Hover any cap to see the backlight.</p>
+    <div class="swatches">
+      <div class="cap sw"><div class="chip" style="background:var(--case)"></div><div class="meta"><div class="name">Case</div><div class="hex" id="hx-case">—</div><div class="role">The anodised deck. Page ground.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--cap)"></div><div class="meta"><div class="name">Cap</div><div class="hex" id="hx-cap">—</div><div class="role">PBT keycap face. Every surface.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--legend)"></div><div class="meta"><div class="name">Legend</div><div class="hex" id="hx-legend">—</div><div class="role">Printed type. Sumi, never pure black.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--legend-dim)"></div><div class="meta"><div class="name">Dim</div><div class="hex" id="hx-dim">—</div><div class="role">Secondary legends, captions.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--accent)"></div><div class="meta"><div class="name">Samurai</div><div class="hex" id="hx-accent">—</div><div class="role">The escape key. Once per screen.</div></div></div>
+      <div class="cap sw"><div class="chip" style="background:var(--amber)"></div><div class="meta"><div class="name">Amber</div><div class="hex" id="hx-amber">—</div><div class="role">Numbers only. Sarathi's data colour.</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">02 · Legends</p>
+    <h2>Type</h2>
+    <p class="note">You picked the keyboard over the serif. So mono carries everything structural — headings, labels, data, nav, buttons — because that is what a legend is. Plex Sans appears only where prose runs longer than two lines, which keeps case studies and the future blog readable. They're one superfamily, so the pairing is designed rather than assembled.</p>
+    <div class="specimen">
+      <div class="row"><div class="tag">Display</div><div class="sp-display">SARATHI</div></div>
+      <div class="row"><div class="tag">Heading</div><div class="sp-h">A drivable corridor, not a lane</div></div>
+      <div class="row"><div class="tag">Body — Sans</div><div class="sp-body">Indian roads do not have lanes. They have a negotiated, continuously deforming free space shared by buses, auto-rickshaws, two-wheelers filtering through 60 cm gaps, and cattle.</div></div>
+      <div class="row"><div class="tag">Data</div><div class="sp-data">43.3 % · 36.2 % · 46 ms · 116/198 · 20 Hz</div></div>
+      <div class="row"><div class="tag">Label</div><div class="sp-label">Chosen trajectory</div></div>
+      <div class="row"><div class="tag">Sublegend</div><div class="sp-kana">ア カ サ タ ナ</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">03 · The component</p>
+    <h2>Keycap</h2>
+    <p class="note">This is the answer to the boxy Mission Control problem. A keycap is still a rectangle, but it has a top face, a side wall, a cast shadow and a gap around it — so it reads as an object you could pick up, not a bordered div. Nothing on the site gets a flat outline.</p>
+    <div class="states">
+      <div class="state"><div class="cap">A</div><div class="caption">Rest. Top highlight, 4px wall, soft cast shadow.</div></div>
+      <div class="state"><div class="cap demo-lit">A</div><div class="caption">Backlit. Lifts 2px, red bleeds from underneath.</div></div>
+      <div class="state"><div class="cap demo-down">A</div><div class="caption">Pressed. Wall collapses to 1px. Real travel.</div></div>
+      <div class="state"><div class="cap is-accent"><span class="kana">ヌ</span>Esc</div><div class="caption">The accent key. One per screen, never two.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">04 · The hero</p>
+    <h2>Assembly sequence</h2>
+    <p class="note">Cardboard scatters thumbnails at the viewport edges, converges them into the editor, then brings the editor to life. Yours does the same thing with the planner — except the layer names below aren't invented for the page, they're the toggles already sitting in your Layers panel. Scroll drives it. This runs the real order.</p>
+    <div class="seq">
+      <canvas id="seq" width="1800" height="620" aria-label="Animated build-up of the Sarathi planner: road, tracks, prediction cones, risk field, corridor, candidate fan, chosen trajectory"></canvas>
+      <div class="bar">
+        <span class="idx" id="seq-idx">7/7</span>
+        <span class="stage" id="seq-stage">Chosen trajectory</span>
+        <div class="ticks" id="seq-ticks"></div>
+        <p class="what" id="seq-what">All but one candidate dissolves. Telemetry populates. The tool is alive.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">05 · The story</p>
+    <h2>Scroll maps to pipeline</h2>
+    <div class="scroll-x">
+      <table class="map">
+        <thead><tr><th class="n"></th><th>Your layer</th><th>What arrives on scroll</th><th>Cardboard's move</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td class="ours">Ground truth</td><td>Bodies drift in from the viewport edges, unlabelled</td><td class="theirs">Scattered thumbnails</td></tr>
+          <tr><td class="n">2</td><td class="ours">Perceived tracks</td><td>Noisy returns collapse into fused boxes, some mis-classed</td><td class="theirs">Filenames appear</td></tr>
+          <tr><td class="n">3</td><td class="ours">Prediction cones</td><td>Intent cones splay from each vulnerable body</td><td class="theirs">Landing in the bin</td></tr>
+          <tr><td class="n">4</td><td class="ours">Risk field</td><td>Vermillion bleeds across the road, harm-weighted</td><td class="theirs">—</td></tr>
+          <tr><td class="n">5</td><td class="ours">Derived reference</td><td>The corridor solves — the thing that replaces the lane</td><td class="theirs">—</td></tr>
+          <tr><td class="n">6</td><td class="ours">Candidate fan</td><td>198 candidates spray out; 116 survive the risk field</td><td class="theirs">Timeline tracks appear</td></tr>
+          <tr><td class="n">7</td><td class="ours">Chosen trajectory</td><td>One line remains. Telemetry fills. 46 ms.</td><td class="theirs">"The editor comes to life"</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">06 · Addresses</p>
+    <h2>Two doors</h2>
+    <p class="note">Recruiters scan and leave; engineers you cold-message want to poke at something. Those are different pages, so they get different hosts — and one design system across both, which is what the Mission Control re-skin buys you.</p>
+    <div class="routes">
+      <div class="cap route">
+        <div class="host">rishabhkushwaha.com</div>
+        <div class="who">Recruiters</div>
+        <p>Static Astro build, Cloudflare-cached at the Indian edge. The assembly sequence, three projects, resume. Loads fast from Raipur even though the origin sits in Oracle's UK region.</p>
+      </div>
+      <div class="cap route">
+        <div class="host">sarathi.rishabhkushwaha.com</div>
+        <div class="who">Engineers</div>
+        <p>The live planner, re-skinned into this system. Grey-clouded so the telemetry socket goes straight to the box. One shared world broadcasts to every viewer — spectators cost 128 KiB/s and no CPU.</p>
+      </div>
+      <div class="cap route">
+        <div class="host">/resume.pdf</div>
+        <div class="who">Both</div>
+        <p>Served by Caddy from a path outside the build directory, so <code>rsync --delete</code> can't wipe it. Updating is one <code>scp</code>. No upload endpoint, no multer, no auth surface.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">07 · Before I build</p>
+    <h2>Open</h2>
+    <ul class="open">
+      <li data-k="A">Sublegends here are katakana, as agreed. A real JIS keycap prints <em>hiragana</em> — ぬ ふ あ う え — because of the kana input layout. Katakana is the aftermarket keycap-set convention, which is where Red Samurai lives, so I've gone with it. Say the word and I'll swap to the authentic JIS mapping.</li>
+      <li data-k="B">The Mission Control re-skin lands in <code>automated-driving</code>, which this session only has read access to. I'll deliver it as a patch you apply, unless you want me to attach the repo with push rights.</li>
+      <li data-k="C">Dark mode here is genuinely dark — near-black case, charcoal caps. Light mode is a warm aluminium deck, not white. Check both by flipping your OS theme; nothing on this page is defined in only one of them.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <h2 class="wordmark" id="wm">RISHABH</h2>
+    <div class="colophon">
+      <span>Design system proof — not the site. Astro scaffold next.</span>
+      <span>IBM Plex Mono · Plex Sans · Noto Sans JP</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ── show the resolved token values, so the hexes are never stale ── */
+(function(){
+  var cs=getComputedStyle(document.documentElement);
+  var map={"hx-case":"--case","hx-cap":"--cap","hx-legend":"--legend","hx-dim":"--legend-dim","hx-accent":"--accent","hx-amber":"--amber"};
+  function paint(){
+    for(var id in map){
+      var el=document.getElementById(id);
+      if(el) el.textContent=cs.getPropertyValue(map[id]).trim().toUpperCase();
+    }
+  }
+  paint();
+  if(window.matchMedia){
+    var mq=window.matchMedia("(prefers-color-scheme: dark)");
+    if(mq.addEventListener) mq.addEventListener("change",paint);
+  }
+})();
+
+/* ── footer wordmark: backlight follows the pointer ─────────────── */
+(function(){
+  var wm=document.getElementById("wm");
+  if(!wm) return;
+  wm.addEventListener("pointermove",function(e){
+    var r=wm.getBoundingClientRect();
+    wm.style.setProperty("--mx",((e.clientX-r.left)/r.width*100).toFixed(1)+"%");
+  });
+  wm.addEventListener("pointerleave",function(){wm.style.setProperty("--mx","32%")});
+})();
+
+/* ── the assembly sequence ──────────────────────────────────────── */
+(function(){
+  var cv=document.getElementById("seq");
+  if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext("2d");
+  var W=1800,H=620;
+
+  var STAGES=[
+    ["Ground truth","Bodies only. No labels, no classes — the world as it is."],
+    ["Perceived tracks","Camera, LiDAR and radar fused into Kalman tracks. Some are wrong."],
+    ["Prediction cones","A manoeuvre distribution per body, clamped to what it can reach."],
+    ["Risk field","Continuous, class-conditioned, harm-weighted. Not an occupancy grid."],
+    ["Derived reference","A dynamic program over free space. This is what replaces the lane."],
+    ["Candidate fan","198 jerk-minimal candidates in the corridor's Frenet frame."],
+    ["Chosen trajectory","All but one candidate dissolves. Telemetry populates. The tool is alive."]
+  ];
+
+  /* fixed cast, so every replay is the same scene */
+  var AGENTS=[
+    {x:.34,o:-26,w:66,h:24,k:"v"},{x:.47,o: 34,w:44,h:19,k:"p"},
+    {x:.58,o:-40,w:78,h:26,k:"v"},{x:.66,o: 14,w:34,h:16,k:"p"},
+    {x:.75,o:-18,w:58,h:22,k:"v"},{x:.83,o: 40,w:40,h:18,k:"p"},
+    {x:.90,o:-30,w:70,h:25,k:"v"},{x:.53,o: 62,w:30,h:15,k:"p"}
+  ];
+  var EGO={x:.17,o:0,w:74,h:27};
+
+  function road(t){return H*0.52+Math.sin(t*2.5-0.6)*46}
+  function px(a){return a.x*W}
+  function py(a){return road(a.x)+a.o}
+
+  function cap(){
+    var cs=getComputedStyle(document.documentElement);
+    return {
+      road:cs.getPropertyValue("--canvas-road").trim(),
+      ink:cs.getPropertyValue("--canvas-ink").trim(),
+      dim:cs.getPropertyValue("--legend-dim").trim(),
+      faint:cs.getPropertyValue("--legend-faint").trim(),
+      accent:cs.getPropertyValue("--accent").trim(),
+      amber:cs.getPropertyValue("--amber").trim(),
+      rule:cs.getPropertyValue("--rule-strong").trim()
+    };
+  }
+
+  function rrect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x-w/2+r,y-h/2);
+    ctx.arcTo(x+w/2,y-h/2,x+w/2,y+h/2,r);
+    ctx.arcTo(x+w/2,y+h/2,x-w/2,y+h/2,r);
+    ctx.arcTo(x-w/2,y+h/2,x-w/2,y-h/2,r);
+    ctx.arcTo(x-w/2,y-h/2,x+w/2,y-h/2,r);
+    ctx.closePath();
+  }
+
+  function draw(stage){
+    var c=cap();
+    ctx.clearRect(0,0,W,H);
+
+    /* the road band */
+    ctx.fillStyle=c.road;
+    ctx.beginPath();
+    ctx.moveTo(0,road(0)-96);
+    for(var t=0;t<=1.001;t+=.02) ctx.lineTo(t*W,road(t)-96);
+    for(var u=1;u>=-.001;u-=.02) ctx.lineTo(u*W,road(u)+96);
+    ctx.closePath();ctx.fill();
+
+    /* 4 — risk field, under everything */
+    if(stage>=4){
+      AGENTS.forEach(function(a){
+        var g=ctx.createRadialGradient(px(a),py(a),2,px(a),py(a),a.k==="v"?118:150);
+        g.addColorStop(0,c.accent);g.addColorStop(1,"rgba(0,0,0,0)");
+        ctx.globalAlpha=a.k==="v"?.16:.26;ctx.fillStyle=g;
+        ctx.beginPath();ctx.arc(px(a),py(a),a.k==="v"?118:150,0,7);ctx.fill();
+      });
+      ctx.globalAlpha=1;
+    }
+
+    /* 5 — the corridor */
+    if(stage>=5){
+      ctx.strokeStyle=c.dim;ctx.lineWidth=2;ctx.setLineDash([11,9]);
+      ctx.beginPath();
+      for(var s=0;s<=1.001;s+=.02){
+        var yy=road(s)+Math.sin(s*7)*13;
+        s===0?ctx.moveTo(0,yy):ctx.lineTo(s*W,yy);
+      }
+      ctx.stroke();ctx.setLineDash([]);
+    }
+
+    /* 3 — prediction cones */
+    if(stage>=3){
+      ctx.globalAlpha=.4;
+      AGENTS.filter(function(a){return a.k==="p"}).forEach(function(a){
+        var d=a.o>0?-1:1;
+        ctx.fillStyle="#3fa46e";
+        ctx.beginPath();
+        ctx.moveTo(px(a),py(a));
+        ctx.lineTo(px(a)-232*d,py(a)-64);
+        ctx.lineTo(px(a)-232*d,py(a)+64);
+        ctx.closePath();ctx.fill();
+      });
+      ctx.globalAlpha=1;
+    }
+
+    /* 6 — the candidate fan */
+    if(stage>=6){
+      var n=26;
+      for(var i=0;i<n;i++){
+        var lat=(i/(n-1)-.5)*220, live=i%7!==0;
+        ctx.strokeStyle=stage>=7?c.faint:(live?c.dim:c.faint);
+        ctx.globalAlpha=stage>=7?.22:(live?.5:.16);
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(px(EGO)+EGO.w/2,py(EGO));
+        ctx.bezierCurveTo(W*.42,py(EGO),W*.55,road(.62)+lat,W*.94,road(.94)+lat*.42);
+        ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+    }
+
+    /* 7 — the one that survives */
+    if(stage>=7){
+      ctx.strokeStyle=c.amber;ctx.lineWidth=5;ctx.lineCap="round";
+      ctx.beginPath();
+      ctx.moveTo(px(EGO)+EGO.w/2,py(EGO));
+      ctx.bezierCurveTo(W*.42,py(EGO),W*.55,road(.62)-56,W*.94,road(.94)-22);
+      ctx.stroke();ctx.lineCap="butt";
+    }
+
+    /* 1 — bodies; 2 — the fused box over each */
+    AGENTS.forEach(function(a){
+      ctx.fillStyle=a.k==="v"?"#3987e5":"#199e70";
+      ctx.globalAlpha=stage>=2?.85:.55;
+      rrect(px(a),py(a),a.w,a.h,4);ctx.fill();
+      ctx.globalAlpha=1;
+      if(stage>=2){
+        ctx.strokeStyle=c.ink;ctx.globalAlpha=.5;ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+        rrect(px(a)+5,py(a)-4,a.w+17,a.h+15,4);ctx.stroke();
+        ctx.setLineDash([]);ctx.globalAlpha=1;
+      }
+    });
+
+    /* ego, always */
+    ctx.fillStyle=c.ink;
+    rrect(px(EGO),py(EGO),EGO.w,EGO.h,4);ctx.fill();
+  }
+
+  /* crisp on HiDPI without changing the drawing coordinates */
+  function fit(){
+    var d=Math.min(window.devicePixelRatio||1,2);
+    cv.width=W*d;cv.height=H*d;
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+
+  var ticks=document.getElementById("seq-ticks");
+  for(var i=0;i<7;i++) ticks.appendChild(document.createElement("i"));
+  var tickEls=ticks.querySelectorAll("i");
+
+  function show(stage){
+    draw(stage);
+    document.getElementById("seq-idx").textContent=stage+"/7";
+    document.getElementById("seq-stage").textContent=STAGES[stage-1][0];
+    document.getElementById("seq-what").textContent=STAGES[stage-1][1];
+    for(var k=0;k<7;k++) tickEls[k].className=k<stage?"on":"";
+  }
+
+  fit();
+  var stage=7;            /* first paint is the payoff, so a still frame reads */
+  show(stage);
+  window.addEventListener("resize",function(){fit();show(stage)});
+
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!reduce){
+    setTimeout(function(){
+      stage=0;
+      setInterval(function(){stage=stage%7+1;show(stage)},1700);
+    },2200);
+  }
+})();
+</script>
