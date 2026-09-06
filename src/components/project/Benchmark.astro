@@ -1,0 +1,269 @@
+---
+interface Row {
+  scenario: string;
+  a: number;
+  b: number;
+  clean: string;
+  p95: number;
+}
+interface Props {
+  caption: string;
+  unit: string;
+  max: number;
+  seriesA: string;
+  seriesB: string;
+  summary: string;
+  rows: Row[];
+}
+
+const { caption, unit, max, seriesA, seriesB, summary, rows } = Astro.props;
+
+// Sorted by margin at the source so the losses land at the bottom, where
+// they read as a stated result rather than something buried mid-table.
+const ticks = [0, 20, 40, 60];
+const pct = (n: number) => (n / max) * 100;
+---
+
+<figure class="bm">
+  <figcaption class="bm__caption">{caption}</figcaption>
+
+  <div class="bm__legend">
+    <span class="bm__key"><i class="bm__swatch is-ours"></i>{seriesA}</span>
+    <span class="bm__key"><i class="bm__swatch is-base"></i>{seriesB}</span>
+    <span class="bm__summary">{summary}</span>
+  </div>
+
+  <div class="bm__scroll">
+    <div class="bm__table" role="table" aria-label={`${seriesA} against ${seriesB}, ${unit}`}>
+      <div class="bm__head" role="row">
+        <span role="columnheader">Scenario</span>
+        <span class="bm__axis" role="columnheader" aria-label={unit}>
+          {ticks.map((t) => (
+            <b class="bm__tick" style={`left:${pct(t)}%`}>{t}</b>
+          ))}
+        </span>
+        <span class="bm__n" role="columnheader">Ours</span>
+        <span class="bm__n" role="columnheader">Base</span>
+        <span class="bm__n" role="columnheader">Δ</span>
+        <span class="bm__n" role="columnheader">Clean</span>
+        <span class="bm__n" role="columnheader">p95</span>
+      </div>
+
+      {
+        rows.map((r) => {
+          const delta = r.a - r.b;
+          const lo = Math.min(r.a, r.b);
+          const hi = Math.max(r.a, r.b);
+          return (
+            <div class="bm__row" role="row">
+              <span class="bm__name" role="cell">{r.scenario}</span>
+              <span class="bm__plot" role="cell">
+                {ticks.map((t) => (
+                  <i class="bm__grid" style={`left:${pct(t)}%`}></i>
+                ))}
+                <i class="bm__conn" style={`left:${pct(lo)}%;width:${pct(hi - lo)}%`}></i>
+                <i class="bm__dot is-base" style={`left:${pct(r.b)}%`}></i>
+                <i class="bm__dot is-ours" style={`left:${pct(r.a)}%`}></i>
+              </span>
+              <span class="bm__n bm__n--ours" role="cell">{r.a.toFixed(1)}</span>
+              <span class="bm__n bm__n--base" role="cell">{r.b.toFixed(1)}</span>
+              <span class={`bm__n bm__delta ${delta >= 0 ? "is-up" : "is-down"}`} role="cell">
+                {delta >= 0 ? "+" : "−"}{Math.abs(delta).toFixed(1)}
+              </span>
+              <span class="bm__n" role="cell">{r.clean}</span>
+              <span class="bm__n" role="cell">{r.p95}</span>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+
+  <p class="bm__foot">
+    Ours and Base are mean route progress, in percent. Clean counts how many of three
+    runs finished without contact. p95 is the 95th-percentile replan latency in
+    milliseconds; 50 ms is the budget 20 Hz allows.
+  </p>
+</figure>
+
+<style>
+  .bm {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .bm__caption {
+    font-family: var(--sans);
+    font-size: var(--step-1);
+    line-height: 1.65;
+    color: var(--legend-dim);
+    max-width: var(--measure);
+    margin-bottom: 20px;
+  }
+
+  .bm__legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    font-size: var(--step--1);
+  }
+  .bm__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--legend-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .bm__swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--case);
+  }
+  .bm__swatch.is-ours {
+    background: var(--series-ours);
+  }
+  .bm__swatch.is-base {
+    background: var(--series-base);
+  }
+  .bm__summary {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    color: var(--legend);
+  }
+
+  .bm__scroll {
+    overflow-x: auto;
+    min-width: 0;
+  }
+  .bm__table {
+    min-width: 680px;
+  }
+
+  .bm__head,
+  .bm__row {
+    display: grid;
+    grid-template-columns: 15ch 1fr 5.5ch 5.5ch 6.5ch 5.5ch 5ch;
+    align-items: center;
+    gap: 0 14px;
+  }
+
+  .bm__head {
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-strong);
+    margin-bottom: 4px;
+  }
+
+  /* the axis ticks live in the header, above the plot column */
+  .bm__axis {
+    position: relative;
+    height: 1em;
+  }
+  .bm__tick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .bm__row {
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.16s ease;
+  }
+  .bm__row:last-child {
+    border-bottom: 0;
+  }
+  .bm__row:hover {
+    background: var(--cap-hi);
+  }
+
+  .bm__name {
+    font-size: var(--step-0);
+    color: var(--legend);
+    overflow-wrap: anywhere;
+  }
+
+  .bm__plot {
+    position: relative;
+    height: 20px;
+  }
+  .bm__grid {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+  .bm__conn {
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--rule-strong);
+    border-radius: 1px;
+  }
+  .bm__dot {
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    /* a surface ring so the two never merge where they overlap */
+    box-shadow: 0 0 0 2px var(--case);
+  }
+  .bm__dot.is-ours {
+    background: var(--series-ours);
+  }
+  .bm__dot.is-base {
+    background: var(--series-base);
+  }
+
+  .bm__n {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--step-0);
+    text-align: right;
+    color: var(--legend-dim);
+  }
+  .bm__n--ours,
+  .bm__n--base {
+    color: var(--legend);
+  }
+  .bm__delta::before {
+    font-size: 0.85em;
+    margin-right: 3px;
+    color: var(--legend-faint);
+  }
+  .bm__delta.is-up::before {
+    content: "▲";
+  }
+  .bm__delta.is-down::before {
+    content: "▼";
+  }
+
+  .bm__foot {
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    color: var(--legend-dim);
+    max-width: var(--measure);
+    margin: 16px 0 0;
+  }
+
+  @media (max-width: 720px) {
+    .bm__summary {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
+  }
+</style>

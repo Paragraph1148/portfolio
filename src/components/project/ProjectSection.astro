@@ -1,0 +1,347 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Benchmark from "./Benchmark.astro";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  index: number;
+}
+
+const { entry, index } = Astro.props;
+const p = entry.data;
+const { Content } = await render(entry);
+const n = String(index).padStart(2, "0");
+---
+
+<section class="project" id={entry.id}>
+  <header class="project__head">
+    <p class="eyebrow">{n} · {p.context ?? "Project"}</p>
+
+    <div class="project__title">
+      <h2>{p.name}</h2>
+      {p.kana && <span class="project__kana">{p.kana}</span>}
+      {p.status === "in-progress" && <span class="project__status">In progress</span>}
+    </div>
+
+    <p class="project__tagline">{p.tagline}</p>
+
+    <ul class="project__stack">
+      {p.stack.map((s) => <li>{s}</li>)}
+    </ul>
+
+    {
+      p.links.length > 0 && (
+        <div class="project__links">
+          {p.links.map((l) => (
+            <a
+              class={`cap project__link ${l.kind === "live" ? "is-accent" : ""}`}
+              href={l.href}
+              rel="noopener"
+            >
+              {l.label}
+              <span class="project__arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </header>
+
+  {
+    p.metrics.length > 0 && (
+      <dl class="project__metrics">
+        {p.metrics.map((m) => (
+          <div class="cap project__metric">
+            {m.kana && <span class="kana">{m.kana}</span>}
+            <dt>{m.label}</dt>
+            <dd>{m.value}</dd>
+            {m.note && <p>{m.note}</p>}
+          </div>
+        ))}
+      </dl>
+    )
+  }
+
+  <div class="project__prose">
+    <Content />
+  </div>
+
+  {
+    p.swaps.length > 0 && (
+      <div class="swaps">
+        <div class="swaps__head">
+          <span>A conventional stack uses</span>
+          <span>This uses instead</span>
+        </div>
+        {p.swaps.map((s) => (
+          <div class="swaps__row">
+            <span class="swaps__from">{s.from}</span>
+            <span class="swaps__to">{s.to}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  {p.benchmark && <Benchmark {...p.benchmark} />}
+
+  {
+    p.limits.length > 0 && (
+      <div class="limits">
+        <h3>What it does not do</h3>
+        <ul>
+          {p.limits.map((l) => (
+            <li>{l}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .project {
+    display: grid;
+    gap: clamp(34px, 6vh, 60px);
+    padding-block: clamp(60px, 12vh, 130px);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Grid items default to min-width:auto, so the wide benchmark table
+     would force this column past the viewport and defeat its own
+     overflow-x. Letting children shrink is what makes it scroll.
+     :global is load-bearing — a child component's root element carries
+     that component's scope id, not this one's, so a plain `.project > *`
+     silently skips exactly the child that overflows. */
+  .project > :global(*) {
+    min-width: 0;
+  }
+
+  .project__head {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+  }
+
+  .project__title {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .project__title h2 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+  }
+  .project__kana {
+    font-family: var(--kana);
+    font-size: var(--step-1);
+    letter-spacing: 0.3em;
+    color: var(--legend-faint);
+  }
+  .project__status {
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+
+  .project__tagline {
+    font-family: var(--sans);
+    font-size: var(--step-2);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 48ch;
+  }
+
+  .project__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+  }
+  .project__stack li + li::before {
+    content: "·";
+    margin-right: 14px;
+    color: var(--legend-faint);
+  }
+
+  .project__links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .project__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    font-size: var(--step-0);
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--legend);
+  }
+  .project__link.is-accent {
+    color: var(--accent-legend);
+  }
+  .project__arrow {
+    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  .project__link:hover .project__arrow {
+    transform: translateX(3px);
+  }
+
+  /* ── the four figures ─────────────────────────────────────────── */
+  .project__metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+  .project__metric {
+    padding: 14px 15px 15px;
+    display: grid;
+    gap: 3px;
+    align-content: start;
+  }
+  .project__metric dt {
+    font-size: var(--step--1);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+    order: 1;
+  }
+  .project__metric dd {
+    margin: 0;
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--legend);
+  }
+  .project__metric p {
+    order: 2;
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--legend-faint);
+    margin: 2px 0 0;
+  }
+
+  /* ── narrative ────────────────────────────────────────────────── */
+  .project__prose :global(h3) {
+    font-size: var(--step-2);
+    letter-spacing: -0.01em;
+    margin: 38px 0 12px;
+  }
+  .project__prose :global(h3:first-child) {
+    margin-top: 0;
+  }
+  .project__prose :global(p) {
+    font-family: var(--sans);
+    font-size: var(--step-1);
+    line-height: 1.7;
+    max-width: var(--measure);
+    margin: 0 0 14px;
+  }
+  .project__prose :global(strong) {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .project__prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--legend-dim);
+  }
+
+  /* ── the substitutions ────────────────────────────────────────── */
+  .swaps {
+    display: grid;
+    gap: 0;
+  }
+  .swaps__head,
+  .swaps__row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 24px;
+  }
+  .swaps__head {
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .swaps__row {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--step-0);
+    line-height: 1.55;
+  }
+  .swaps__row:last-child {
+    border-bottom: 0;
+  }
+  .swaps__from {
+    color: var(--legend-faint);
+    text-decoration: line-through;
+    text-decoration-color: var(--rule-strong);
+  }
+  .swaps__to {
+    color: var(--legend);
+  }
+
+  /* ── the honest part ──────────────────────────────────────────── */
+  .limits h3 {
+    font-size: var(--step-2);
+    margin-bottom: 14px;
+  }
+  .limits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .limits li {
+    position: relative;
+    padding-left: 26px;
+    font-family: var(--sans);
+    font-size: var(--step-1);
+    line-height: 1.65;
+    color: var(--legend-dim);
+    max-width: var(--measure);
+  }
+  .limits li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 12px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  @media (max-width: 720px) {
+    .swaps__head,
+    .swaps__row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .swaps__head span:last-child {
+      display: none;
+    }
+  }
+</style>

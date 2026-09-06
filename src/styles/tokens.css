@@ -31,6 +31,11 @@
   --accent-glow: rgba(192, 39, 31, 0.34);
   --amber: #9a5a00;
 
+  /* chart series — validated for CVD and normal-vision separation
+     against the cap surface; see docs/. Never reuse the accent here. */
+  --series-ours: #a05c00;
+  --series-base: #0f6f9c;
+
   --rule: rgba(23, 23, 26, 0.13);
   --rule-strong: rgba(23, 23, 26, 0.26);
   --wordmark-dim: rgba(23, 23, 26, 0.1);
@@ -88,6 +93,9 @@
     --accent-glow: rgba(224, 57, 44, 0.5);
     --amber: #e6a949;
 
+    --series-ours: #c07f22;
+    --series-base: #2280b5;
+
     --rule: rgba(239, 235, 226, 0.13);
     --rule-strong: rgba(239, 235, 226, 0.28);
     --wordmark-dim: rgba(239, 235, 226, 0.07);
@@ -127,6 +135,9 @@
   --accent-legend: #fff0ed;
   --accent-glow: rgba(224, 57, 44, 0.5);
   --amber: #e6a949;
+
+  --series-ours: #c07f22;
+  --series-base: #2280b5;
 
   --rule: rgba(239, 235, 226, 0.13);
   --rule-strong: rgba(239, 235, 226, 0.28);

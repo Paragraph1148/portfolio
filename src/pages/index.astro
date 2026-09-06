@@ -1,6 +1,12 @@
 ---
+import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Hero from "../components/hero/Hero.astro";
+import ProjectSection from "../components/project/ProjectSection.astro";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
 ---
 
 <Base
@@ -10,14 +16,15 @@ import Hero from "../components/hero/Hero.astro";
   <Hero />
 
   <main class="shell">
-    <section class="scaffold">
+    {projects.map((entry, i) => <ProjectSection entry={entry} index={i + 1} />)}
+
+    <section class="pending">
       <p class="eyebrow">Next</p>
-      <h2>The rest of the deck</h2>
+      <h2>Brahmo and winter-chat</h2>
       <p>
-        Sarathi, Brahmo and winter-chat land here as keycap sections, then the
-        stack, the writing placeholder and the footer wordmark. The hero above is
-        the piece that had to be right first — everything below inherits its
-        tokens.
+        Both land here as sections in the same shape — a markdown file each, no
+        component work. Then the stack, the writing placeholder and the footer
+        wordmark.
       </p>
     </section>
   </main>
@@ -25,9 +32,13 @@ import Hero from "../components/hero/Hero.astro";
 
 <style>
   main {
-    padding-block: clamp(60px, 12vh, 140px);
+    padding-bottom: clamp(60px, 12vh, 140px);
   }
-  .scaffold h2 {
+  .pending {
+    border-top: 1px solid var(--rule);
+    padding-top: clamp(40px, 8vh, 80px);
+  }
+  .pending h2 {
     margin-bottom: 12px;
   }
 </style>
