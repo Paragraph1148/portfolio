@@ -4,7 +4,7 @@ import { glob } from "astro/loaders";
 /**
  * One shape for every case study, so a project is content rather than
  * layout. Adding or replacing a project is a markdown file — no
- * component work — which is what makes the Brahmo overhaul a drop-in.
+ * component work, so another one is a file rather than a refactor.
  */
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.md" }),

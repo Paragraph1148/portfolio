@@ -14,21 +14,12 @@ const projects = (await getCollection("projects")).sort(
 
 <Base
   title="Rishabh Singh Kushwaha"
-  description="Backend engineer. A real-time motion-planning stack for unstructured Indian roads, and a clinical decision-support system whose safety path never depends on model output."
+  description="Backend engineer. A real-time motion-planning stack for unstructured Indian roads that never reads a lane marking — a corridor solver, a harm-weighted risk field, and the benchmark harness behind every number claimed."
 >
   <Hero />
 
   <main class="shell">
     {projects.map((entry, i) => <ProjectSection entry={entry} index={i + 1} />)}
-
-    <section class="pending">
-      <p class="eyebrow">Also</p>
-      <h2>Brahmo and winter-chat</h2>
-      <p>
-        Both land here in the same shape — a markdown file each, no component
-        work.
-      </p>
-    </section>
 
     <Stack />
     <Writing />
@@ -36,16 +27,3 @@ const projects = (await getCollection("projects")).sort(
 
   <Footer />
 </Base>
-
-<style>
-  .pending {
-    border-top: 1px solid var(--rule);
-    padding-block: clamp(50px, 9vh, 100px);
-  }
-  .pending h2 {
-    margin-bottom: 12px;
-  }
-  .pending p {
-    color: var(--legend-dim);
-  }
-</style>
