@@ -9,6 +9,12 @@ interface Props {
 
 const { title, description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Cloudflare Web Analytics: aggregate, cookieless, no consent banner needed.
+// Optional — unset and the tag simply is not emitted. With the hostname
+// proxied you can instead let Cloudflare inject this automatically and set
+// nothing here at all; see docs/deploy.md.
+const beacon = import.meta.env.PUBLIC_CF_BEACON;
 ---
 
 <!doctype html>
@@ -34,6 +40,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </head>
   <body>
     <slot />
+
+    {
+      beacon && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${beacon}"}`}
+        />
+      )
+    }
 
     <script>
       import { initPointerLight } from "../scripts/pointer-light";

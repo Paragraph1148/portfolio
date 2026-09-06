@@ -1,0 +1,47 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Base title="Not found" description="That page does not exist on rishabhkushwaha.com.">
+  <main class="shell lost">
+    <p class="eyebrow">404</p>
+    <h1>No route to here</h1>
+    <p class="lost__body">
+      The planner would call this an infeasible candidate and drop it. Nothing at
+      this address.
+    </p>
+    <a class="cap lost__home" href="/">
+      Back to the start <span aria-hidden="true">→</span>
+    </a>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .lost {
+    display: grid;
+    justify-items: start;
+    gap: 18px;
+    padding-block: clamp(80px, 22vh, 220px);
+  }
+  .lost h1 {
+    font-size: var(--step-4);
+  }
+  .lost__body {
+    font-family: var(--sans);
+    font-size: var(--step-2);
+    color: var(--legend-dim);
+    max-width: 44ch;
+    margin: 0;
+  }
+  .lost__home {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 17px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 8px;
+  }
+</style>
