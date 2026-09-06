@@ -61,7 +61,7 @@ rishabhkushwaha.com, www.rishabhkushwaha.com {
 
 	handle {
 		root * /srv/portfolio/site
-		try_files {path} {path}/ /404.html
+		try_files {path} {path}/
 		file_server
 
 		# Filenames are content-hashed, so these can be cached hard.
@@ -70,6 +70,16 @@ rishabhkushwaha.com, www.rishabhkushwaha.com {
 
 		# HTML is not, and must not be, or a deploy goes unnoticed for a year.
 		header /*.html Cache-Control "public, max-age=0, must-revalidate"
+	}
+
+	# A missing page must ANSWER 404, not 200 carrying the 404 page's body.
+	# Putting /404.html in try_files above does the latter: every typo and
+	# every dead link returns "success", and a crawler indexes them all as
+	# real pages. handle_errors serves the same page with the real status.
+	handle_errors {
+		root * /srv/portfolio/site
+		rewrite * /404.html
+		file_server
 	}
 }
 ```
@@ -100,9 +110,13 @@ Then wait for Caddy to get its certificate and confirm the origin really works:
 ```bash
 curl -sSI https://rishabhkushwaha.com | head -3
 curl -sSI https://rishabhkushwaha.com/resume.pdf | head -3
+curl -sSI https://rishabhkushwaha.com/nope | head -3     # must say 404
 ```
 
-Both must be `200` before going further. Caddy obtains the certificate over
+The first two must be `200` and the third `404` before going further. A
+`404` on `/resume.pdf` with an empty body means Caddy's `handle` block is
+matching but the file is not in `/srv/portfolio/files` — step 3 was skipped.
+A *styled* page there instead means the block is missing from the site file. Caddy obtains the certificate over
 HTTP-01, so the name has to resolve to the box first — that is the whole reason
 this step comes before the proxy.
 
