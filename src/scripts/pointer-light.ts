@@ -1,8 +1,8 @@
 /**
  * Pointer-tracked light.
  *
- * One rAF-coalesced listener drives every keycap backlight and the footer
- * glimmer. Nothing resets its position on leave — only brightness falls
+ * One rAF-coalesced listener drives every keycap backlight (.cap and the
+ * lighter .key) and the footer glimmer. Nothing resets its position on leave — only brightness falls
  * away, so the light dies where it stood instead of snapping to centre.
  */
 type Pending = { el: HTMLElement; cx: number; cy: number; x: string; y: string };
@@ -34,7 +34,7 @@ export function initPointerLight(): void {
       const t = e.target as Element | null;
       if (!t || typeof t.closest !== "function") return;
 
-      const cap = t.closest<HTMLElement>(".cap");
+      const cap = t.closest<HTMLElement>(".cap, .key");
       if (cap) {
         track(cap, e.clientX, e.clientY, "--px", "--py");
         return;

@@ -1,0 +1,134 @@
+---
+/**
+ * Grouped by the job each tool does, not a logo wall. The kana marking
+ * each group runs ア カ サ タ ナ ハ — gojūon order, so the sublegends
+ * number the rows instead of decorating them.
+ */
+const groups = [
+  { kana: "ア", label: "Languages", items: ["Python", "TypeScript", "JavaScript", "SQL"] },
+  {
+    kana: "カ",
+    label: "Backend & real-time",
+    items: ["Node.js", "WebSockets", "REST API design"],
+  },
+  { kana: "サ", label: "Databases", items: ["PostgreSQL", "Supabase"] },
+  { kana: "タ", label: "Frontend", items: ["Next.js", "React", "HTML5 Canvas"] },
+  {
+    kana: "ナ",
+    label: "AI integration",
+    items: ["Claude API", "Groq · Llama 70B", "LLM application design"],
+  },
+  {
+    kana: "ハ",
+    label: "Tooling & testing",
+    items: ["AWS", "Docker", "Git", "uv", "pytest", "Playwright"],
+  },
+];
+---
+
+<section class="stack" id="stack">
+  <p class="eyebrow">02 · The board</p>
+  <h2>What I reach for</h2>
+  <p class="stack__lede">
+    I came to this from physics, which is a useful place to start: you are trained
+    to distrust a result you cannot reproduce, and to write down the conditions
+    under which it was measured. Most of what follows is in service of that.
+  </p>
+
+  <div class="stack__rows">
+    {
+      groups.map((g) => (
+        <div class="stack__row">
+          <div class="stack__label">
+            <span class="stack__kana">{g.kana}</span>
+            {g.label}
+          </div>
+          <ul class="stack__keys">
+            {g.items.map((i) => (
+              <li class="key stack__key">{i}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .stack {
+    padding-block: clamp(60px, 12vh, 130px);
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .stack > :global(*) {
+    min-width: 0;
+  }
+
+  .stack__lede {
+    font-family: var(--sans);
+    font-size: var(--step-2);
+    line-height: 1.55;
+    color: var(--legend-dim);
+    max-width: 54ch;
+    margin: 0 0 14px;
+  }
+
+  .stack__rows {
+    display: grid;
+    gap: 18px;
+    width: 100%;
+  }
+
+  .stack__row {
+    display: grid;
+    grid-template-columns: 21ch 1fr;
+    gap: 12px 24px;
+    align-items: start;
+  }
+
+  .stack__label {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: var(--step--1);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--legend-dim);
+    padding-top: 11px;
+  }
+  .stack__kana {
+    font-family: var(--kana);
+    font-size: 1.15em;
+    letter-spacing: 0;
+    color: var(--legend-faint);
+    text-transform: none;
+  }
+
+  .stack__keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stack__key {
+    padding: 8px 13px 9px;
+    font-family: var(--mono);
+    font-size: var(--step-0);
+    color: var(--legend);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .stack__row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .stack__label {
+      padding-top: 0;
+    }
+  }
+</style>

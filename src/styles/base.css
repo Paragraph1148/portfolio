@@ -227,3 +227,45 @@ p {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── the small key ────────────────────────────────────────────────
+   A keycap without the glass. Stack chips and social buttons come in
+   twenties, and a backdrop-filter each is a bill worth not paying —
+   the wall, the rim and the backlight carry it on their own. */
+.key {
+  --px: 50%;
+  --py: 50%;
+  position: relative;
+  border-radius: 8px;
+  background: linear-gradient(178deg, var(--cap-sheen), transparent 46%), var(--cap);
+  box-shadow: 0 1px 0 var(--cap-rim) inset, 0 0 0 1px var(--cap-hi) inset,
+    0 3px 0 var(--cap-wall), 0 5px 10px var(--cap-shadow);
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 0.16s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.key::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 12px;
+  z-index: -1;
+  background: radial-gradient(46% 58% at var(--px) var(--py), var(--accent-glow), transparent 72%);
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.key:hover,
+.key:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 0 var(--cap-rim) inset, 0 0 0 1px var(--cap-hi) inset,
+    0 5px 0 var(--cap-wall), 0 9px 16px var(--cap-shadow);
+}
+.key:hover::before,
+.key:focus-visible::before {
+  opacity: 1;
+}
+.key:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--cap-rim) inset, 0 0 0 1px var(--cap-hi) inset,
+    0 1px 0 var(--cap-wall), 0 2px 5px var(--cap-shadow);
+}

@@ -3,6 +3,9 @@ import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Hero from "../components/hero/Hero.astro";
 import ProjectSection from "../components/project/ProjectSection.astro";
+import Stack from "../components/Stack.astro";
+import Writing from "../components/Writing.astro";
+import Footer from "../components/Footer.astro";
 
 const projects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
@@ -19,26 +22,30 @@ const projects = (await getCollection("projects")).sort(
     {projects.map((entry, i) => <ProjectSection entry={entry} index={i + 1} />)}
 
     <section class="pending">
-      <p class="eyebrow">Next</p>
+      <p class="eyebrow">Also</p>
       <h2>Brahmo and winter-chat</h2>
       <p>
-        Both land here as sections in the same shape — a markdown file each, no
-        component work. Then the stack, the writing placeholder and the footer
-        wordmark.
+        Both land here in the same shape — a markdown file each, no component
+        work.
       </p>
     </section>
+
+    <Stack />
+    <Writing />
   </main>
+
+  <Footer />
 </Base>
 
 <style>
-  main {
-    padding-bottom: clamp(60px, 12vh, 140px);
-  }
   .pending {
     border-top: 1px solid var(--rule);
-    padding-top: clamp(40px, 8vh, 80px);
+    padding-block: clamp(50px, 9vh, 100px);
   }
   .pending h2 {
     margin-bottom: 12px;
+  }
+  .pending p {
+    color: var(--legend-dim);
   }
 </style>

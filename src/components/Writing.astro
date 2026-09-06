@@ -1,0 +1,62 @@
+---
+// A placeholder that says what will be here rather than "coming soon" on
+// its own. When posts exist this becomes a content collection like
+// projects, and the route drops in beside it.
+---
+
+<section class="writing" id="writing">
+  <p class="eyebrow">03 · Writing</p>
+  <div class="writing__body">
+    <h2>Not yet</h2>
+    <p>
+      There is a queue: how counting rejected candidates beats tuning thresholds,
+      why a serverless runtime cannot host a 20 Hz simulation, and what a
+      substring match costs when the string is a diagnosis. When the first one is
+      written it appears here.
+    </p>
+  </div>
+  <span class="writing__mark" aria-hidden="true">近日</span>
+</section>
+
+<style>
+  .writing {
+    padding-block: clamp(60px, 12vh, 130px);
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 18px 40px;
+  }
+  .writing .eyebrow {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+  .writing h2 {
+    margin-bottom: 12px;
+    color: var(--legend-dim);
+  }
+  .writing p {
+    font-family: var(--sans);
+    font-size: var(--step-1);
+    line-height: 1.7;
+    color: var(--legend-dim);
+    margin: 0;
+  }
+
+  /* 近日 — "in a few days". A stamp, not a heading. */
+  .writing__mark {
+    font-family: var(--kana);
+    font-size: clamp(2.4rem, 7vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: var(--wordmark-dim);
+    user-select: none;
+  }
+
+  @media (max-width: 720px) {
+    .writing {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+</style>
