@@ -203,21 +203,12 @@ p {
   color: rgba(255, 255, 255, 0.55);
 }
 
-/* Glass is a backdrop-filter per cap — cheap on a laptop, not free on a
-   phone or a tablet. Gate it on the POINTER, not the width: an iPad is 834px
-   across, so a width query left every blur running on exactly the devices
-   least able to composite them. The rim and the backlight stay, and they
-   carry most of the effect for almost nothing. */
-@media (max-width: 720px), (hover: none), (pointer: coarse) {
-  .cap {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    background: linear-gradient(178deg, var(--cap-sheen), transparent 44%), var(--cap);
-  }
-  .cap::after {
-    display: none;
-  }
-}
+/* Glass stays on everywhere, phones included — verified on a real iPad
+   rather than assumed. The worry was never GPU power: it was a Safari
+   compositing bug that paints blank tiles under a scrolling sticky
+   container, and that did not reproduce. If it ever shows up on some
+   other device, this is the one thing to switch off: set
+   `backdrop-filter: none` on .cap and hide .cap::after. */
 
 /* Lenis ships a stylesheet and I had not included it. Without these the
    library adds its classes and then fights the document's own scrolling —
