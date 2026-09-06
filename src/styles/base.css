@@ -204,9 +204,11 @@ p {
 }
 
 /* Glass is a backdrop-filter per cap — cheap on a laptop, not free on a
-   mid-range phone. Below the threshold keep the rim and the backlight,
-   which carry most of the effect for almost nothing. */
-@media (max-width: 720px) {
+   phone or a tablet. Gate it on the POINTER, not the width: an iPad is 834px
+   across, so a width query left every blur running on exactly the devices
+   least able to composite them. The rim and the backlight stay, and they
+   carry most of the effect for almost nothing. */
+@media (max-width: 720px), (hover: none), (pointer: coarse) {
   .cap {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -215,6 +217,26 @@ p {
   .cap::after {
     display: none;
   }
+}
+
+/* Lenis ships a stylesheet and I had not included it. Without these the
+   library adds its classes and then fights the document's own scrolling —
+   which is exactly the class of bug that strands a page mid-scroll. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

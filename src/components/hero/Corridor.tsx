@@ -188,7 +188,7 @@ function Scene({
     return [build(-1), build(1)];
   }, []);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const target = progress.current ?? 0;
     // Framerate-independent follow, so the flow feels the same at 60 and 144.
     smoothed.current += (target - smoothed.current) * (1 - Math.pow(0.0016, delta));
@@ -209,12 +209,20 @@ function Scene({
     const rChosen = at(cursor, 7);
 
     if (cam.current) {
-      // High and back: the road reads as a deck seen at a rake, and the
-      // ego stays a keycap on it rather than filling the frame.
+      // High and back: the road reads as a deck seen at a rake, and the ego
+      // stays a keycap on it rather than filling the frame.
+      //
+      // fov is VERTICAL, so a portrait phone gets a much narrower horizontal
+      // field than a laptop — and this road runs away from the camera
+      // horizontally. Composed for landscape and left alone, the ego filled a
+      // 390px screen and the road was not visible at all. Pull back as the
+      // aspect narrows so the same composition survives portrait.
+      const aspect = state.size.width / Math.max(1, state.size.height);
+      const pull = aspect < 1 ? 1 + (1 - aspect) * 1.2 : 1;
       cam.current.position.set(
-        3.2 - smoothed.current * 1.1,
-        7.4 - smoothed.current * 1.7,
-        19.5 - smoothed.current * 4.2
+        (3.2 - smoothed.current * 1.1) * pull,
+        (7.4 - smoothed.current * 1.7) * pull,
+        (19.5 - smoothed.current * 4.2) * pull
       );
       cam.current.lookAt(-0.6, 0.1, -12 - smoothed.current * 2);
     }

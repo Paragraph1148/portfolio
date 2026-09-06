@@ -32,7 +32,12 @@ import Corridor from "./Corridor";
   .hero__sticky {
     position: sticky;
     top: 0;
+    /* 100vh on iOS is the LARGE viewport — the height with the toolbar
+       hidden — so anything anchored to the bottom sits below the visible
+       area until you scroll. svh is the height actually on screen, which is
+       why the layer readout was off the bottom on the iPad. */
     height: 100vh;
+    height: 100svh;
     overflow: hidden;
   }
 
@@ -84,7 +89,10 @@ import Corridor from "./Corridor";
     color: var(--legend-dim);
   }
 
-  /* the readout, bottom-left, reporting which layer is on screen */
+  /* An instrument readout on a plate. It used to sit directly on the scene,
+     which meant the ego keycap drove straight under it and the text became
+     unreadable — a legend you cannot read while the thing it describes moves
+     past is worse than no legend. */
   .hero :global(.hero__hud) {
     position: absolute;
     left: var(--gutter);
@@ -95,6 +103,11 @@ import Corridor from "./Corridor";
     align-items: center;
     gap: 8px 14px;
     max-width: min(560px, calc(100% - var(--gutter) * 2));
+    padding: 11px 15px 12px;
+    border-radius: 11px;
+    background: linear-gradient(178deg, var(--cap-sheen), transparent 44%), var(--cap);
+    box-shadow: 0 1px 0 var(--cap-rim) inset, 0 0 0 1px var(--cap-hi) inset,
+      0 3px 0 var(--cap-wall), 0 6px 14px var(--cap-shadow);
   }
   .hero :global(.hero__idx) {
     font-family: var(--mono);
@@ -130,9 +143,15 @@ import Corridor from "./Corridor";
     max-width: 54ch;
   }
 
-  @media (max-width: 720px) {
+  /* pointer, not width: an iPad is 834px across and still scrolled by thumb */
+  @media (max-width: 1024px), (pointer: coarse) {
+    /* Seven stages is a long way to swipe before the page says anything, and
+       a thumb covers less ground per gesture than a wheel does. */
     .hero {
-      height: 420vh;
+      height: 320vh;
+    }
+    .hero__lede {
+      font-size: var(--step-1);
     }
     .hero :global(.hero__hud) {
       grid-template-columns: auto 1fr;

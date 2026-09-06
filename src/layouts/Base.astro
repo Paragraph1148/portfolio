@@ -57,9 +57,14 @@ const beacon = import.meta.env.PUBLIC_CF_BEACON;
 
       initPointerLight();
 
-      // Smooth scroll is the whole point of the hero's flow, but it is also
-      // the first thing to disable when someone has asked for less motion.
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Smooth scroll is a MOUSE-WHEEL affordance: it interpolates discrete
+      // wheel deltas into continuous motion. Touch already has native
+      // momentum, so on a phone or an iPad Lenis adds nothing and takes on a
+      // whole class of iOS scrolling bugs — including stranding the page so
+      // nothing below the fold can be reached. Fine pointers only.
+      const fine = window.matchMedia("(pointer: fine)").matches;
+      const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (fine && !still) {
         const lenis = new Lenis({ duration: 1.05, smoothWheel: true });
         const raf = (time: number) => {
           lenis.raf(time);
